@@ -4,6 +4,7 @@ use curl::easy::{Easy, List};
 
 use crate::agent::*;
 use crate::waypoint::*;
+use crate::contract::*;
 
 
 pub struct Api {
@@ -16,7 +17,6 @@ pub enum ApiError {
     BadRequestError,
     EncodingError,
     JsonParseError,
-    ResponseParseError,
     RateLimitExceeded,
 }
 
@@ -28,26 +28,24 @@ impl Api {
     }
 
     pub fn agent(&self) -> Result<Agent, ApiError> {
-        let res = curl("https://api.spacetraders.io/v2/my/agent", &self.token)?;
-        let parsed = serde_json::from_str::<Value>(&res)?;
-        check_error(&parsed)?;
-        if let Ok(agent) = Agent::from_json(&parsed["data"]) {
-            Ok(agent)
-        } else {
-            Err(ApiError::ResponseParseError)
-        }
+        let parsed = curl_and_parse("https://api.spacetraders.io/v2/my/agent", &self.token)?;
+        Ok(Agent::from_json(&parsed["data"]))
     }
 
     pub fn waypoint(&self, waypoint: &str) -> Result<Waypoint, ApiError> {
         let symbol = WaypointSymbol::from_waypoint(waypoint);
         let url = format!("https://api.spacetraders.io/v2/systems/{}/waypoints/{}", symbol.system(), symbol.waypoint);
-        let res = curl(&url, &self.token)?;
-        let parsed = serde_json::from_str::<Value>(&res)?;
-        check_error(&parsed)?;
-        if let Ok(wp) = Waypoint::from_json(&parsed["data"]) {
-            Ok(wp)
-        } else {
-            Err(ApiError::ResponseParseError)
+
+        let parsed = curl_and_parse(&url, &self.token)?;
+        Ok(Waypoint::from_json(&parsed["data"]))
+    }
+
+    pub fn contracts(&self) -> Result<Vec<Contract>, ApiError> {
+        let parsed = curl_and_parse("https://api.spacetraders.io/v2/my/contracts", &self.token)?;
+        
+        match &parsed["data"] {
+            Value::Array(arr) => Ok(arr.into_iter().map(|val| Contract::from_json(&val)).collect::<Vec<_>>()),
+            _ => Ok(Vec::new()),
         }
     }
 }
@@ -61,6 +59,13 @@ impl Api {
 
 
 
+
+fn curl_and_parse(url: &str, token: &str) -> Result<Value, ApiError> {
+    let res = curl(url, token)?;
+    let parsed = serde_json::from_str::<Value>(&res)?;
+    check_error(&parsed)?;
+    Ok(parsed)
+}
 
 fn curl(url: &str, token: &str) -> Result<String, ApiError> {
     let mut buffer = Vec::new();

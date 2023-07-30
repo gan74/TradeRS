@@ -1,5 +1,7 @@
 use serde_json::Value;
 
+use crate::utils::*;
+
 #[derive(Debug)]
 pub struct Agent {
     id: String,
@@ -11,19 +13,13 @@ pub struct Agent {
 }
 
 impl Agent {
-    pub fn from_json(value: &serde_json::Value) -> Result<Agent, ()> {
-        match (&value["accountId"], &value["symbol"], &value["headquarters"], &value["startingFaction"], &value["credits"]) {
-            (Value::String(id), Value::String(sym), Value::String(hd), Value::String(faction), Value::Number(creds)) => {
-                Ok(Agent{
-                    id: id.clone(),
-                    symbol: sym.clone(),
-                    headquarters: hd.clone(),
-                    faction: faction.clone(),
-                    credits: creds.as_i64().expect("Credits are not i64"),
-                })
-            },
-
-            _ => Err(()),
+    pub fn from_json(value: &Value) -> Agent {
+        Agent{
+            id: as_string(&value["accountId"]),
+            symbol: as_string(&value["symbol"]),
+            headquarters: as_string(&value["headquarters"]),
+            faction: as_string(&value["startingFaction"]),
+            credits: value["credits"].as_i64().unwrap(),
         }
     }
 }

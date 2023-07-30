@@ -1,5 +1,7 @@
 use serde_json::Value;
 
+use crate::utils::*;
+
 #[derive(Debug)]
 pub struct Waypoint {
     symbol: String,
@@ -10,18 +12,12 @@ pub struct Waypoint {
 }
 
 impl Waypoint {
-    pub fn from_json(value: &serde_json::Value) -> Result<Waypoint, ()> {
-        match (&value["symbol"], &value["type"], &value["x"], &value["y"]) {
-            (Value::String(sym), Value::String(wp_type), Value::Number(x), Value::Number(y)) => {
-                Ok(Waypoint{
-                    symbol: sym.clone(),
-                    wp_type: wp_type.clone(),
-                    x: x.as_i64().expect("X is not i64"),
-                    y: y.as_i64().expect("Y is not i64"),
-                })
-            },
-
-            _ => Err(()),
+    pub fn from_json(value: &Value) -> Waypoint {
+        Waypoint{
+            symbol: as_string(&value["symbol"]),
+            wp_type: as_string(&value["type"]),
+            x: value["x"].as_i64().unwrap(),
+            y: value["y"].as_i64().unwrap(),
         }
     }
 }
