@@ -6,7 +6,6 @@ use std::io::prelude::*;
 
 
 
-
 pub fn as_string(val: &Value) -> String {
     val.as_str().unwrap().to_string()
 }

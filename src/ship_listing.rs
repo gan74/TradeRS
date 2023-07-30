@@ -5,14 +5,16 @@ use crate::waypoint::*;
 
 #[derive(Debug)]
 pub struct ShipListing {
-    symbol: String,
-    price: i64,
+    pub symbol: String,
+    pub waypoint: String,
+    pub price: i64,
 }
 
 impl ShipListing {
     pub fn from_json(value: &Value) -> ShipListing {
         ShipListing{
             symbol: as_string(&value["shipSymbol"]),
+            waypoint: as_string(&value["waypointSymbol"]),
             price: value["price"].as_i64().unwrap(),
         }
     }

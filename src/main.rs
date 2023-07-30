@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-#[allow(unused_imports)] 
+#![allow(unused_imports)] 
 
 extern crate serde_json;
 
@@ -9,6 +9,8 @@ mod api;
 mod agent;
 mod waypoint;
 mod contract;
+mod ship;
+mod outfitting;
 mod ship_listing;
 
 use crate::utils::*;
@@ -16,6 +18,8 @@ use crate::agent::*;
 use crate::api::*;
 use crate::waypoint::*;
 use crate::contract::*;
+use crate::ship::*;
+use crate::outfitting::*;
 use crate::ship_listing::*;
 use crate::request_manager::*;
 
@@ -36,13 +40,14 @@ fn main() {
     let agent = api.agent().unwrap();
     println!("{:?}", agent);
 
-    let system_waypoints = api.system_waypoints(agent.headquarters()).unwrap();
-    for wp in system_waypoints {
-        if wp.has_trait("SHIPYARD") {
-            let sp = api.available_ships(wp.symbol()).unwrap();
-            println!("{:?}", sp);
+    let all_ships = api.ships().unwrap();
+    for ship in all_ships {
+        if ship.is_drone() && ship.has_mounted(&MountType::MiningLaser) {
+            println!("Mining drone: {:?}", ship);
+            //api.move_to_orbit(&ship).unwrap();
+            //api.extract(&ship).unwrap();
         }
     }
 
-
+    println!("ok!");
 }
