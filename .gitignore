@@ -20,9 +20,4 @@ Cargo.lock
 
 
 token.*
-
-# Added by cargo
-#
-# already existing elements were commented out
-
-#/target
+api.log
