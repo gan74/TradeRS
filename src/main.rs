@@ -1,18 +1,24 @@
 extern crate serde_json;
 
 mod utils;
-mod trader;
+mod api;
+mod agent;
+mod waypoint;
 
 use crate::utils::*;
-use crate::trader::*;
-
-fn create_agent() -> Agent {
-    let token = read_text_file("./token.json").expect("Could not find token file");
-    Agent::from_json(&token).expect("Could not create agent from token")
-}
+use crate::agent::*;
+use crate::api::*;
+use crate::waypoint::*;
 
 fn main() {
-    let agent = create_agent();
+    let token = read_text_file("./token.txt").expect("Could not find token file");
+    let api = Api::new(token);
 
-    println!("Hello, trader!");
+    let agent = api.agent().unwrap();
+    println!("{:?}", agent);
+
+    let hd = api.waypoint(&agent.headquarters).unwrap();
+    println!("{:?}", hd);
+
+
 }
