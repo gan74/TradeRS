@@ -4,7 +4,7 @@ use crate::utils::*;
 
 #[derive(Debug)]
 pub struct Contract {
-    id: String,
+    pub id: String,
     faction: String,
     contract_type: String,
 

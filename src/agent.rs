@@ -1,12 +1,13 @@
 use serde_json::Value;
 
 use crate::utils::*;
+use crate::waypoint::*;
 
 #[derive(Debug)]
 pub struct Agent {
     id: String,
     symbol: String,
-    pub headquarters: String,
+    hq: String,
     faction: String,
 
     credits: i64,
@@ -17,9 +18,13 @@ impl Agent {
         Agent{
             id: as_string(&value["accountId"]),
             symbol: as_string(&value["symbol"]),
-            headquarters: as_string(&value["headquarters"]),
+            hq: as_string(&value["headquarters"]),
             faction: as_string(&value["startingFaction"]),
             credits: value["credits"].as_i64().unwrap(),
         }
+    }
+
+    pub fn headquarters(&self) -> WaypointSymbol {
+        WaypointSymbol::from_name(&self.hq)
     }
 }
