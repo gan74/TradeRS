@@ -1,7 +1,8 @@
 use serde_json::Value;
-use std::collections::HashSet;
 
 use crate::utils::*;
+
+use std::collections::HashSet;
 
 #[derive(Debug)]
 pub struct Waypoint {
