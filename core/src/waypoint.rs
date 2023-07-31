@@ -16,7 +16,7 @@ pub struct Waypoint {
 }
 
 impl Waypoint {
-    pub fn from_json(value: &Value) -> Waypoint {
+    pub fn from_json(value: &Value) -> Self {
         let traits = match &value["traits"] {
             Value::Array(arr) => arr.into_iter().map(|val| as_string(&val["symbol"])).collect::<HashSet<_>>(),
             _ => HashSet::new(),

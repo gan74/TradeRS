@@ -3,33 +3,33 @@ use serde_json::Value;
 use crate::utils::*;
 use crate::outfitting::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ShipStatus {
     Docked,
     InTransit,
     InOrbit,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Ship {
     symbol: String,
     waypoint: String,
 
-    status: ShipStatus,
+    pub status: ShipStatus,
 
-    fuel: i64,
-    max_fuel: i64,
+    pub fuel: i64,
+    pub max_fuel: i64,
 
     crew: i64,
     max_crew: i64,
 
-    inventory: ShipInventory,
+    pub inventory: ShipInventory,
 
     mounts: Vec<MountType>,
 }
 
 impl Ship {
-    pub fn from_json(value: &Value) -> Ship {
+    pub fn from_json(value: &Value) -> Self {
         let nav = &value["nav"];
         let fuel = &value["fuel"];
         let crew = &value["crew"];
@@ -71,16 +71,16 @@ impl Ship {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ShipInventory {
-    capacity: i64,
-    used: i64,
+    pub capacity: i64,
+    pub used: i64,
 
     inventory: Vec<(String, i64)>,
 }
 
 impl ShipInventory {
-    pub fn from_json(value: &Value) -> ShipInventory {
+    pub fn from_json(value: &Value) -> Self {
         let inventory = match &value["inventory"] {
             Value::Array(arr) => arr.into_iter().map(|val| (as_string(&val["symbol"]), val["units"].as_i64().unwrap())).collect::<Vec<_>>(),
             _ => Vec::new(),

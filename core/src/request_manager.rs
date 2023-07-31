@@ -11,11 +11,11 @@ pub enum RequestError {
 
 
 pub struct RequestManager {
-    log_file: Box<dyn Write>,
+    log_file: Box<dyn Write + Send>,
 }
 
 impl RequestManager {
-    pub fn new<F: Write + 'static>(file: F) -> RequestManager {
+    pub fn new<F: Write + Send + 'static>(file: F) -> Self {
         RequestManager {
             log_file: Box::new(file),
         }

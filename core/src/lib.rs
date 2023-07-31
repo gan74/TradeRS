@@ -1,4 +1,4 @@
-#![allow(dead_code)]
+/*#![allow(dead_code)]
 #![allow(unused_imports)] 
 
 extern crate serde_json;
@@ -50,4 +50,21 @@ fn main() {
     }
 
     println!("ok!");
-}
+}*/
+
+#![allow(dead_code)]
+#![allow(unused_imports)] 
+
+extern crate serde_json;
+
+pub mod request_manager;
+pub mod utils;
+pub mod api;
+pub mod agent;
+pub mod waypoint;
+pub mod contract;
+pub mod ship;
+pub mod outfitting;
+pub mod ship_listing;
+
+

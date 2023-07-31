@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum MountType {
     Unknown(String),
     SensorArray,
@@ -9,7 +9,7 @@ pub enum MountType {
 }
 
 impl MountType {
-    pub fn from_json(value: &Value) -> MountType {
+    pub fn from_json(value: &Value) -> Self {
         match value["symbol"].as_str().unwrap() {
             "MOUNT_SENSOR_ARRAY_I" => MountType::SensorArray,
             "MOUNT_SURVEYOR_I" => MountType::Surveyor,

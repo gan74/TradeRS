@@ -11,7 +11,7 @@ pub struct ShipListing {
 }
 
 impl ShipListing {
-    pub fn from_json(value: &Value) -> ShipListing {
+    pub fn from_json(value: &Value) -> Self {
         ShipListing{
             symbol: as_string(&value["shipSymbol"]),
             waypoint: as_string(&value["waypointSymbol"]),

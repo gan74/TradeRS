@@ -16,7 +16,7 @@ pub struct Contract {
 }
 
 impl Contract {
-    pub fn from_json(value: &Value) -> Contract {
+    pub fn from_json(value: &Value) -> Self {
         let payment = &value["terms"]["payment"];
         Contract{
             id: as_string(&value["id"]),

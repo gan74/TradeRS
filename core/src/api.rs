@@ -9,16 +9,15 @@ use crate::ship::*;
 use crate::ship_listing::*;
 use crate::utils::*;
 
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 
 
 pub struct Api {
     token: String,
-    req_manager: Rc<RefCell<RequestManager>>,
+    req_manager: Arc<Mutex<RequestManager>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ApiError {
     ConnectionError,
     BadRequestError(String),
@@ -26,7 +25,7 @@ pub enum ApiError {
 }
 
 impl Api {
-    pub fn new(token: String, req_manager: Rc<RefCell<RequestManager>>) -> Api {
+    pub fn new(token: String, req_manager: Arc<Mutex<RequestManager>>) -> Self {
         Api {
             token: token,
             req_manager: req_manager,
@@ -135,7 +134,7 @@ impl Api {
 
 
     fn get_and_parse(&self, url: &str) -> Result<Value, ApiError> {
-        let res = self.req_manager.borrow_mut().get(url, &self.token)?;
+        let res = self.req_manager.lock().unwrap().get(url, &self.token)?;
         let parsed = serde_json::from_str::<Value>(&res)?;
         check_is_error(&parsed)?;
         Ok(parsed)
@@ -146,7 +145,7 @@ impl Api {
     }
 
     fn post_json_and_parse(&self, url: &str, content: Value) -> Result<Value, ApiError> {
-        let res = self.req_manager.borrow_mut().post(url, content, &self.token)?;
+        let res = self.req_manager.lock().unwrap().post(url, content, &self.token)?;
         let parsed = serde_json::from_str::<Value>(&res)?;
         check_is_error(&parsed)?;
         Ok(parsed)
